@@ -6,9 +6,15 @@ import random
 import string
 import os
 import json
+import pyttsx3
 
+engine=pyttsx3.init()
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
 
 def add_transaction(account):
+
     """
     Prompts the user to add a transaction (either deposit or expense) to the account.
 
@@ -36,15 +42,19 @@ def add_transaction(account):
             account.account_balance -= amount
         status_list=[['Transaction ID', 'Transaction Amount', 'Transaction Type'], [transaction_id, amount, transaction_type]]    
         print("Transaction added!")
+        speak('Transaction added!')
         print(tabulate(status_list, tablefmt='outline', headers='firstrow'))
         leave = input("Press enter to finalize transactions, or any other key to add more transactions: ")
         if leave == '':
             print("Process complete.")
+            speak('Process complete')
             break
         else:
             print("Continuing transaction process...")
+            speak("Continuing transaction process...")
 
     print(f"Your account balance after these transactions is {account.account_balance}")
+    speak(f"Your account balance after these transactions is {account.account_balance}")
 
 def undo_transaction(account):
     """
@@ -58,6 +68,7 @@ def undo_transaction(account):
     """
     while True:
         remove_transaction = input("Enter transaction ID to remove: ").upper()
+        speak("Enter transaction ID to remove: ")
         status_list = [['Transaction ID', 'Transaction Amount', 'Transaction Type']]
         for i in range(1, len(account.transactions)):
             if remove_transaction == next(iter(account.transactions[i].keys())):
@@ -69,12 +80,18 @@ def undo_transaction(account):
                 if confirm:
                     account.transactions.pop(i)
                     restore_balance(account, amount, type)
+                    speak("Transaction has been removed.")
                     print("Transaction has been removed.")
+                    
                 else:
+                    speak("Removal cancelled.")
                     print("Removal cancelled.")
+                    
                 break
         else:
+            speak("Transaction ID not found.")
             print("Transaction ID not found.")
+            
         
         leave = input("Press enter to exit removal process, or any other key to continue: ")
         if leave == '':
@@ -113,3 +130,4 @@ def display_balance(account):
         None
     """
     print("Your account balance is:", account.account_balance)
+    speak(f"Your account balance is: {account.account_balance}")
